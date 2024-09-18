@@ -7,17 +7,16 @@ on:
       - "*"
 
 jobs:
-  call-build:
-    uses: conda-incubator/conda-store-ui/.github/workflows/build.yml@main
-
   make-release:
     runs-on: ubuntu-latest
-    # ensure that the artifacts are available from the build job
-    needs: call-build
 
     steps:
       - name: "Checkout repository 🛎"
         uses: actions/checkout@v4
+
+      # Ensure the following steps have and use the version of Yarn specified in package.json
+      - name: "Enable corepack (setup Yarn)"
+        run: corepack enable
 
       # Setup .npmrc file to publish to npm
       - name: "Set up Node.js 🧶"
@@ -26,18 +25,20 @@ jobs:
           node-version: 18
           registry-url: "https://registry.npmjs.org"
           scope: "@conda-store-ui"
+          cache: "yarn"
 
       - name: "Install dependencies 📦"
-        run: yarn
+        run: yarn install --immutable
 
       - name: "Lint code 🔎"
         run: yarn eslint:check
 
-      - name: "Download webpack bundle 📦"
-        uses: actions/download-artifact@v4
-        with:
-          name: webpack-bundle
-          path: dist/
+      - name: "Build application 🏗"
+        run: yarn run build
+
+      - name: "Build application artifacts 🏗"
+        # ensure we use the prod target to minimise assets
+        run: yarn run webpack:prod bundle
 
       - name: "Generate package tarball 📦"
         run: yarn pack --filename conda-store-ui.tgz
