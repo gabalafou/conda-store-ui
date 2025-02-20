@@ -108,7 +108,7 @@ export const Dependencies = ({
                   <TableRow>
                     <TableCell sx={{ fontSize: "13px" }}>Package</TableCell>
                     <TableCell sx={{ fontSize: "13px", textAlign: "right" }}>
-                      Installed Version
+                      Version
                     </TableCell>
                   </TableRow>
                 </TableHead>

@@ -34,7 +34,7 @@ export const RequestedPackageList = ({
   return (
     <Accordion
       sx={{
-        maxWidth: 420,
+        width: 190 * 3,
         boxShadow: "none"
       }}
       disableGutters
@@ -51,21 +51,24 @@ export const RequestedPackageList = ({
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontSize: "13px" }}>Package</TableCell>
+                <TableCell sx={{ fontSize: "13px" }}>
+                  Installed Version
+                </TableCell>
                 <TableCell sx={{ fontSize: "13px", textAlign: "right" }}>
                   Requested Version
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredPackageList.map((item, index) => (
+              {filteredPackageList.map((item: string, index: number) => (
                 <TableRow
-                  key={String(item)}
+                  key={item}
                   sx={{
                     backgroundColor: index % 2 ? "secondary.50" : "transparent"
                   }}
                 >
                   <RequestedPackage
-                    requestedPackage={String(item)}
+                    requestedPackage={item}
                     isLast={index === listLength - 1}
                   />
                 </TableRow>

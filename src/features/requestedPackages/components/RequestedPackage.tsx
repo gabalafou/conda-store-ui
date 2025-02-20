@@ -2,6 +2,9 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import TableCell from "@mui/material/TableCell";
 import { requestedPackageParser } from "../../../utils/helpers";
+import { useAppSelector } from "../../../hooks";
+import styled from "@mui/material/styles/styled";
+
 interface IRequestedPackageProps {
   /**
    * @param requestedPackage requested package
@@ -10,48 +13,59 @@ interface IRequestedPackageProps {
   isLast: boolean;
 }
 
+const StyledTableCell = styled(TableCell)(() => ({
+  width: 190
+}));
+
+const StyledTypography = styled(Typography)(() => ({
+  fontSize: "13px",
+  color: "#333"
+}));
+
 export const RequestedPackage = ({
   requestedPackage,
   isLast
 }: IRequestedPackageProps) => {
+  const { versionsWithoutConstraints, versionsWithConstraints } =
+    useAppSelector(state => state.requestedPackages);
   const { constraint, name, version } =
     requestedPackageParser(requestedPackage);
 
   return (
     <>
-      <TableCell
+      <StyledTableCell
         sx={{
-          display: "flex",
-          alignItems: "center",
           borderBottom: isLast ? "none" : undefined
         }}
       >
-        <Typography
-          sx={{
-            width: 190,
-            fontSize: "13px",
-            color: "#333"
-          }}
-        >
-          {name}
-        </Typography>
-      </TableCell>
-      <TableCell
-        sx={{ textAlign: "right", borderBottom: isLast ? "none" : undefined }}
+        <StyledTypography>{name}</StyledTypography>
+      </StyledTableCell>
+      <StyledTableCell
+        sx={{
+          borderBottom: isLast ? "none" : undefined
+        }}
       >
-        <Typography
+        <StyledTypography sx={{ fontFamily: "monospace" }}>
+          {versionsWithConstraints[name] ?? versionsWithoutConstraints[name]}{" "}
+        </StyledTypography>
+      </StyledTableCell>
+      <StyledTableCell
+        sx={{
+          textAlign: "right",
+          borderBottom: isLast ? "none" : undefined
+        }}
+      >
+        <StyledTypography
           sx={{
-            fontSize: "13px",
             fontFamily: constraint === "latest" ? "inherit" : "monospace",
-            fontStyle: constraint === "latest" ? "italic" : "normal",
-            color: "#333"
+            fontStyle: constraint === "latest" ? "italic" : "normal"
           }}
         >
           {constraint === "latest"
             ? "(no version requested)"
             : `${constraint.replace("==", "=")}${version}`}
-        </Typography>
-      </TableCell>
+        </StyledTypography>
+      </StyledTableCell>
     </>
   );
 };
